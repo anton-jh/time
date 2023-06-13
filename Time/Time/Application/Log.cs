@@ -3,28 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Time.Exceptions;
 using Time.Models;
 
 namespace Time.Application;
 internal class Log
 {
-    private LogEntry? _tail;
+    private readonly List<CompleteLogEntry> _entries = new();
+
+    private DraftLogEntry? _draft;
 
 
-    public void AddTimeStamp(TimeStamp timeStamp)
+    public void LogTime(TimeStamp timeStamp)
     {
-        LogEntry entry = new(_tail)
+        if (_draft is null)
         {
-            TimeStamp = timeStamp
-        };
-        _tail = entry;
+            _draft = new(timeStamp);
+            return;
+        }
+
+        _entries.Add(_draft.Close(timeStamp));
     }
 
-    public void AddLabel(Label label)
+    public void SetLabel(Label label)
     {
-        if (_tail.Label is null)
+        if (_draft is null)
         {
-
+            throw new UserErrorException("No open entry.");
         }
+
+        _draft.SetLabel(label);
+    }
+
+    public void AddSubSegment(SubSegment subSegment)
+    {
+        if (_draft is null)
+        {
+            throw new UserErrorException("No open entry.");
+        }
+
+        _draft.AddSubSegment(subSegment);
     }
 }

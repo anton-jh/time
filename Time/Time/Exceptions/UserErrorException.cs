@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Time.Exceptions;
-internal abstract class UserErrorException : Exception
+internal class UserErrorException : Exception
 {
     public UserErrorException(string userMessage)
         : base(userMessage)
