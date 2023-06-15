@@ -1,40 +1,47 @@
-﻿using Time.Models;
+﻿using Time.Exceptions;
+using Time.Models;
 
 namespace Time.Parsing;
 internal class TimeStampParser : IParser<TimeStamp>
 {
-    public TimeStamp? Parse(string word)
+    public TimeStamp Parse(string word)
     {
         if (word.Length != 5)
         {
-            return null;
+            ThrowHelper();
         }
 
         string[] parts = word.Split(':');
 
         if (parts.Length != 2)
         {
-            return null;
+            ThrowHelper();
         }
 
         if (!int.TryParse(parts[0], out int hours))
         {
-            return null;
+            ThrowHelper();
         }
         if (!int.TryParse(parts[1], out int minutes))
         {
-            return null;
+            ThrowHelper();
         }
 
         if (hours is < 0 or > 23)
         {
-            return null;
+            ThrowHelper();
         }
         if (minutes is < 0 or > 59)
         {
-            return null;
+            ThrowHelper();
         }
 
         return new TimeStamp(new TimeOnly(hours, minutes));
+    }
+
+
+    private static void ThrowHelper()
+    {
+        throw new UserErrorException("Invalid timestamp");
     }
 }

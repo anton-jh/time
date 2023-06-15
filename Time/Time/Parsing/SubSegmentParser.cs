@@ -5,18 +5,19 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Time.Application;
+using Time.Exceptions;
 using Time.Models;
 
 namespace Time.Parsing;
 internal partial class SubSegmentParser : IParser<SubSegment>
 {
-    public SubSegment? Parse(string word)
+    public SubSegment Parse(string word)
     {
         Match match = Pattern().Match(word);
 
         if (!match.Success)
         {
-            return null;
+            throw new UserErrorException("Invalid segment.");
         }
 
         string modeString = match.Groups[1].Value;

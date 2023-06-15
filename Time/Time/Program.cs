@@ -1,4 +1,5 @@
 ﻿using Time.Application;
+using Time.Commands;
 using Time.Exceptions;
 using Time.Models;
 using Time.Parsing;
@@ -14,11 +15,20 @@ List<IPreProcessor> globalPreProcessors = new()
 
 List<IPreProcessor> timePreProcessors = new()
 {
+    new HoursTimePreProcessor(),
     new ColonTimePreProcessor()
 };
 
 IParser<TimeStamp> timeParser = new TimeStampParser();
 IParser<SubSegment> subSegmentParser = new SubSegmentParser();
+IParser<ICommand> commandParser = new CommandParser(new List<ICommand>()
+{
+    new RemoveLastEntryCommand(),
+    new RemoveLastSubSectionCommand(),
+    new RemoveLastExtraSectionCommand(),
+    new ShowReportCommand(),
+    new ClearEntryDraftCommand()
+});
 
 Log log = new();
 
@@ -45,11 +55,13 @@ while (true)
             Console.WriteLine(ex.Message);
             Console.Read();
         }
-        catch (Exception ex)
+#if !DEBUG
+        catch (Exception)
         {
-            Console.WriteLine(ex.Message);
+            Console.WriteLine("Unknown error.");
             Console.Read();
         }
+#endif
     }
 }
 
@@ -86,7 +98,7 @@ void Parse(string word)
     }
     else if (word[0] == '.')
     {
-        // Parse commands
+        commandParser.Parse(word[1..])?.Apply(log);
     }
     else
     {
@@ -108,19 +120,23 @@ void ShowState()
 {
     Console.Clear();
 
+    if (log.ExtraSegments.Any())
+    {
+        foreach (SubSegment subSegment in log.ExtraSegments)
+        {
+            Console.WriteLine(subSegment);
+        }
+
+        Console.WriteLine();
+    }
+
     foreach (LogEntry entry in log.Entries)
     {
         Console.WriteLine(entry);
     }
 
-    foreach (SubSegment subSegment in log.ExtraSegments)
-    {
-        Console.WriteLine(subSegment);
-    }
-
     if (log.EntryDraft is not null)
     {
-        Console.WriteLine();
         Console.WriteLine(log.EntryDraft);
     }
 

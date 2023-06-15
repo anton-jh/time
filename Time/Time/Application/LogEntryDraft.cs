@@ -39,7 +39,7 @@ internal class LogEntryDraft
 
         if (subSegmentSum > totalEntryTime)
         {
-            throw new UserErrorException($@"Total time of entry ({totalEntryTime:h\hm\m}) cannot be less than that of all sub-segments ({subSegmentSum:h\hm\m}).");
+            throw new UserErrorException($@"Total time of entry ({totalEntryTime:h\h m\m}) cannot be less than that of all sub-segments ({subSegmentSum:h\h m\m}).");
         }
 
         _subSegments.Add(subSegment);
@@ -62,12 +62,20 @@ internal class LogEntryDraft
 
         if (totalEntryTime < subSegmentSum)
         {
-            throw new UserErrorException($@"Total time of entry ({totalEntryTime:h\h m}min) cannot be less than that of all sub-segments ({subSegmentSum:h\h m}min).");
+            throw new UserErrorException($@"Total time of entry ({totalEntryTime:h\hm}min) cannot be less than that of all sub-segments ({subSegmentSum:h\hm}min).");
         }
 
         End = end;
 
         return new LogEntry(Start, End.Value, Label, SubSegments);
+    }
+
+    public void RemoveLastSubSegment()
+    {
+        if (_subSegments.Any())
+        {
+            _subSegments.RemoveAt(_subSegments.Count - 1);
+        }
     }
 
 

@@ -60,4 +60,35 @@ internal class Log
 
         EntryDraft.AddSubSegment(subSegment);
     }
+
+    public void RemoveLastEntry()
+    {
+        if (_entries.Any())
+        {
+            _entries.RemoveAt(_entries.Count - 1);
+        }
+    }
+
+    public void RemoveLastSubSection()
+    {
+        EntryDraft?.RemoveLastSubSegment();
+    }
+
+    public void RemoveLastExtraSegment()
+    {
+        if (_segments.Any())
+        {
+            _segments.RemoveAt(_segments.Count - 1);
+        }
+    }
+
+    public void ClearEntryDraft()
+    {
+        EntryDraft = null;
+    }
+
+    public Report GenerateReport()
+    {
+        return new(_entries, _segments);
+    }
 }
