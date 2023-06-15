@@ -1,7 +1,7 @@
 ﻿using Time.Models;
 
 namespace Time.Parsing;
-internal class TimeParser : IParser<TimeStamp>
+internal class TimeStampParser : IParser<TimeStamp>
 {
     public TimeStamp? Parse(string word)
     {
@@ -35,6 +35,6 @@ internal class TimeParser : IParser<TimeStamp>
             return null;
         }
 
-        return new(hours, minutes);
+        return new TimeStamp(new TimeOnly(hours, minutes));
     }
 }
