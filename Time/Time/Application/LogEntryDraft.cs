@@ -94,4 +94,27 @@ internal class LogEntryDraft
 
         return stringBuilder.ToString();
     }
+
+    public string Serialize()
+    {
+        StringBuilder stringBuilder = new();
+
+        stringBuilder.AppendLine(Start.ToString());
+        if (Label is not null)
+        {
+            stringBuilder.AppendLine(Label.ToString());
+        }
+
+        foreach (SubSegment subSegment in SubSegments)
+        {
+            stringBuilder.AppendLine(subSegment.Serialize());
+        }
+
+        if (End is not null)
+        {
+            stringBuilder.AppendLine(End.ToString());
+        }
+
+        return stringBuilder.ToString();
+    }
 }

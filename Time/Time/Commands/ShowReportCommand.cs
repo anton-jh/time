@@ -17,14 +17,20 @@ internal class ShowReportCommand : CommandBase
 
     public override void Apply(Log log)
     {
-        Report report = log.GenerateReport();
-        ShowReport(report);
+        Report report = new(log.Entries, log.ExtraSegments);
+        TimeOnly? endTime = log.CalculateEndTime(report);
+        ShowReport(report, endTime);
     }
 
 
-    private static void ShowReport(Report report)
+    private static void ShowReport(Report report, TimeOnly? endTime)
     {
         Console.Clear();
+
+        if (endTime is not null)
+        {
+            Console.WriteLine($"Projected end of workday: {endTime}");
+        }
 
         Console.WriteLine(report);
 

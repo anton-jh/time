@@ -18,6 +18,9 @@ internal class Report
     }
 
 
+    public TimeSpan TotalWorkedTime => new(_accounts.Sum(account => account.Value.Ticks));
+
+
     private void AddEntries(IEnumerable<LogEntry> entries)
     {
         foreach (LogEntry entry in entries)

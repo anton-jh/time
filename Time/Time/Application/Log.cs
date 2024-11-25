@@ -1,4 +1,5 @@
-﻿using Time.Exceptions;
+﻿using System.Text;
+using Time.Exceptions;
 using Time.Models;
 
 namespace Time.Application;
@@ -87,8 +88,41 @@ internal class Log
         EntryDraft = null;
     }
 
-    public Report GenerateReport()
+    public TimeOnly? CalculateEndTime(Report report)
     {
-        return new(_entries, _segments);
+        TimeOnly? latestTime = EntryDraft is not null
+            ? EntryDraft.Start
+            : _entries.LastOrDefault()?.End;
+
+        if (latestTime is null)
+        {
+            return null;
+        }
+
+        TimeSpan remainingTime = TimeSpan.FromHours(8) - report.TotalWorkedTime;
+
+        return latestTime.Value.Add(remainingTime);
+    }
+
+    public string Serialize()
+    {
+        StringBuilder stringBuilder = new();
+
+        foreach (LogEntry entry in _entries)
+        {
+            stringBuilder.AppendLine(entry.Serialize());
+        }
+
+        foreach (SubSegment segment in _segments)
+        {
+            stringBuilder.AppendLine(segment.Serialize());
+        }
+
+        if (EntryDraft is not null)
+        {
+            stringBuilder.AppendLine(EntryDraft.Serialize());
+        }
+
+        return stringBuilder.ToString();
     }
 }

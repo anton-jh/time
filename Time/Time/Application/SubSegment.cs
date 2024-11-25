@@ -20,4 +20,9 @@ internal class SubSegment
     {
         return $"{(Subtractive ? "-" : "+")} {TimeSpan.Hours}h {TimeSpan.Minutes}min ({Label})";
     }
+
+    public string Serialize()
+    {
+        return $"{(Subtractive ? "-" : "+")}{TimeSpan.Hours}h{TimeSpan.Minutes}min,{Label}";
+    }
 }

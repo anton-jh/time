@@ -34,4 +34,21 @@ internal class LogEntry
 
         return stringBuilder.ToString();
     }
+
+    public string Serialize()
+    {
+        StringBuilder stringBuilder = new();
+
+        stringBuilder.AppendLine(Start.ToString());
+        stringBuilder.AppendLine(Label.ToString());
+
+        foreach (SubSegment subSegment in SubSegments)
+        {
+            stringBuilder.AppendLine(subSegment.Serialize());
+        }
+
+        stringBuilder.AppendLine(End.ToString());
+
+        return stringBuilder.ToString();
+    }
 }
