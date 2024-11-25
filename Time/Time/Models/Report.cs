@@ -17,6 +17,10 @@ internal class Report
         AddSegments(extraSegments);
     }
 
+    public Report(IEnumerable<LogLine> lines)
+    {
+    }
+
 
     public TimeSpan TotalWorkedTime => new(_accounts.Sum(account => account.Value.Ticks));
 
