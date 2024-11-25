@@ -1,9 +1,8 @@
 ﻿using System.Text;
-using Time.Models;
 
-namespace Time.Application;
+namespace Time.Models;
 internal class LogEntry
-{   
+{
     public LogEntry(TimeOnly start, TimeOnly end, Label label, IEnumerable<SubSegment> subSegments)
     {
         Start = start;

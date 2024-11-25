@@ -1,8 +1,7 @@
 ﻿using System.Text;
 using Time.Exceptions;
-using Time.Models;
 
-namespace Time.Application;
+namespace Time.Models;
 internal class Log
 {
     private readonly List<LogEntry> _entries = new();
@@ -15,20 +14,20 @@ internal class Log
     public IEnumerable<SubSegment> ExtraSegments => _segments;
 
 
-    public void LogTime(TimeOnly timeStamp)
+    public void LogTime(TimeStamp timeStamp)
     {
         if (EntryDraft is null)
         {
-            if (_entries.Any() && _entries.Last().End > timeStamp)
+            if (_entries.Any() && _entries.Last().End > timeStamp.Value)
             {
                 throw new UserErrorException("Start time must be after previous entry's end time.");
             }
 
-            EntryDraft = new(timeStamp);
+            EntryDraft = new(timeStamp.Value);
             return;
         }
 
-        _entries.Add(EntryDraft.Close(timeStamp));
+        _entries.Add(EntryDraft.Close(timeStamp.Value));
         EntryDraft = null;
     }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Time.Application;
+using Time.Models;
 
 namespace Time.Commands;
 internal class RemoveLastExtraSectionCommand : CommandBase

@@ -1,86 +1,33 @@
-﻿using Time.Exceptions;
+﻿namespace Time.Models;
 
-namespace Time.Models;
-
-internal abstract record LogLine;
-
-internal record TimeLogLine(TimeOnly Timestamp) : LogLine;
-internal record LabelLogLine(string Label) : LogLine;
-internal record SubSegmentLogLine(TimeSpan Timespan) : LogLine
+internal abstract record LogLine
 {
-    public override bool CanAppend(LogState state)
+    public abstract void Apply(Log log);
+}
+
+internal record TimeLogLine(TimeStamp Timestamp) : LogLine
+{
+    public override void Apply(Log log)
     {
-        return state.IsOpen();
+        log.LogTime(Timestamp);
     }
 }
 
 
-internal record ExternalSegmentLogLine(TimeSpan Timespan) : LogLine
+internal record LabelLogLine(Label Label) : LogLine
 {
-    public override bool CanAppend(LogState state)
+    public override void Apply(Log log)
     {
-        return true;
+        log.SetLabel(Label);
     }
 }
 
-
-internal class LogState
+internal record SubSegmentLogLine(SubSegment SubSegment) : LogLine
 {
-    private Dictionary<string, TimeSpan> _accounts = [];
-    private TimeOnly? _startTime;
-
-
-    public Stack<LogLine> MainStack { get; set; } = [];
-
-
-    public void Append(LogLine line)
+    public override void Apply(Log log)
     {
-        switch (line)
-        {
-            case TimeLogLine timeLogLine:
-                if (GetLatestTime() is TimeLogLine time
-                    && time.Timestamp < timeLogLine.Timestamp)
-                {
-                    throw new InvalidLogOperationException("New timestamp must be after the previous");
-                }
-                MainStack.Push(line);
-                break;
-            case LabelLogLine labelLogLine:
-                if (IsEmpty())
-                {
-                    throw new InvalidLogOperationException("Cannot add label without a start time");
-                }
-                if (GetLabelOfDraftSegment() is not null)
-                {
-                    throw new InvalidLogOperationException("Cannot add multiple labels to same segment");
-                }
-                break;
-            default:
-                break;
-        }
+        log.AddSubSegment()
     }
-
-
-    private bool IsEmpty()
-    {
-        return MainStack.Count == 0;
-    }
-
-    private TimeLogLine? GetLatestTime()
-    {
-        return MainStack
-            .OfType<TimeLogLine>()
-            .FirstOrDefault();
-    }
-
-    private LabelLogLine? GetLabelOfDraftSegment()
-    {
-        return MainStack
-            .TakeWhile(x => x is not TimeLogLine)
-            .OfType<LabelLogLine>()
-            .FirstOrDefault();
-    }
-
-
-    internal record Segment(TimeLogLine StartTime, LabelLogLine? Label);
 }
+
+internal record ExternalSegmentLogLine(TimeSpan Timespan) : LogLine;

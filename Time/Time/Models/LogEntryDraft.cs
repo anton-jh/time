@@ -1,8 +1,7 @@
 ﻿using System.Text;
 using Time.Exceptions;
-using Time.Models;
 
-namespace Time.Application;
+namespace Time.Models;
 internal class LogEntryDraft
 {
     private readonly List<SubSegment> _subSegments = new();
