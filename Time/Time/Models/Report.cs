@@ -55,7 +55,9 @@ internal class Report
     {
         StringBuilder stringBuilder = new();
 
-        int longestKey = _accounts.Keys.Max(key => key.Value.Length);
+        int longestKey = _accounts.Keys.Any()
+            ? _accounts.Keys.Max(key => key.Value.Length)
+            : 1;
 
         foreach (KeyValuePair<Label, TimeSpan> account in _accounts)
         {
